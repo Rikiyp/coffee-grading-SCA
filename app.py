@@ -11,19 +11,11 @@ import tempfile
 from collections import Counter
 from pathlib import Path
 
-try:
-    import cv2
-    CV2_AVAILABLE = True
-except ImportError:
-    CV2_AVAILABLE = False
+import cv2
 import numpy as np
 import streamlit as st
-try:
-    import torch
-    import torchvision
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
+import torch
+import torchvision
 
 # ── Coba import ultralytics & sahi ──────────────────────────────────────────
 try:
@@ -427,20 +419,8 @@ def main():
     <hr>
     """, unsafe_allow_html=True)
 
-    # ── Cek dependency wajib ────────────────────────────────
-    missing = []
-    if not CV2_AVAILABLE:
-        missing.append("`opencv-python-headless`")
-    if not TORCH_AVAILABLE:
-        missing.append("`torch` dan `torchvision`")
     if not YOLO_AVAILABLE:
-        missing.append("`ultralytics`")
-    if missing:
-        st.error(
-            "❌ Library berikut belum terinstall: " + ", ".join(missing) + "\n\n"
-            "Pastikan `requirements.txt` sudah ada di root repo dan berisi:\n"
-            "```\nopencv-python-headless\nultralytics\ntorch\ntorchvision\n```"
-        )
+        st.error("❌ `ultralytics` tidak terinstall. Jalankan: `pip install ultralytics`")
         st.stop()
 
     # ── Sidebar: konfigurasi ─────────────────────────────────
@@ -544,12 +524,12 @@ def main():
             col1, col2 = st.columns(2)
             with col1:
                 st.image(baseline_vis, caption="🔵 Baseline YOLOv8s-seg",
-                         use_container_width=True)
+                         use_column_width=True)
                 n_base = len(baseline_result["boxes"])
                 st.metric("Total deteksi", f"{n_base} cacat")
             with col2:
                 st.image(sahi_vis, caption="🟢 SAHI + YOLOv8s-seg",
-                         use_container_width=True)
+                         use_column_width=True)
                 n_sahi = len(sahi_result["boxes"])
                 st.metric("Total deteksi", f"{n_sahi} cacat",
                           delta=f"{n_sahi - n_base:+d} vs Baseline")
@@ -630,7 +610,7 @@ def main():
         preview_cols = st.columns(min(len(uploaded), 4))
         for i, f in enumerate(uploaded):
             with preview_cols[i % 4]:
-                st.image(f, caption=f.name, use_container_width=True)
+                st.image(f, caption=f.name, use_column_width=True)
 
 
 if __name__ == "__main__":
